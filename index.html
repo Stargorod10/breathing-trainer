@@ -60,10 +60,48 @@ let currentInhale=3,currentExhale=5,currentHoldIn=2,currentHoldOut=2,audioCtx=nu
 const $=id=>document.getElementById(id),circle=$("circle"),phaseEl=$("phase"),countEl=$("count"),rhythmEl=$("rhythm"),remainingEl=$("remaining");
 
 function audioInit(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume()}
-function beep(kind){audioInit();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";
-o.frequency.value={inhale:660,holdin:520,exhale:440,holdout:360}[kind]||440;
-const v=Number($("volume").value)/100*.38;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(Math.max(v,.0001),audioCtx.currentTime+.025);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.32);
-o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.34)}
+function beep(kind) {
+  audioInit();
+
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  const compressor = audioCtx.createDynamicsCompressor();
+
+  const frequencies = {
+    inhale: 880,
+    holdin: 660,
+    exhale: 440,
+    holdout: 330
+  };
+
+  osc.type = "sine";
+  osc.frequency.value = frequencies[kind] || 440;
+
+  // Значно сильніший сигнал
+  gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(
+    0.9,
+    audioCtx.currentTime + 0.015
+  );
+  gain.gain.exponentialRampToValueAtTime(
+    0.0001,
+    audioCtx.currentTime + 0.45
+  );
+
+  // Компресор робить сигнал щільнішим і помітнішим
+  compressor.threshold.value = -24;
+  compressor.knee.value = 10;
+  compressor.ratio.value = 8;
+  compressor.attack.value = 0.003;
+  compressor.release.value = 0.15;
+
+  osc.connect(gain);
+  gain.connect(compressor);
+  compressor.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.5);
+}
 function rand(a,b,max=30){a=Math.max(1,Math.min(max,Number(a)||1));b=Math.max(1,Math.min(max,Number(b)||1));if(a>b)[a,b]=[b,a];return Math.floor(Math.random()*(b-a+1))+a}
 function newRhythm(){currentInhale=rand($("imin").value,$("imax").value);currentExhale=rand($("emin").value,$("emax").value);currentHoldIn=rand($("hin").value,$("hin").value,60);currentHoldOut=rand($("hout").value,$("hout").value,60)}
 function showRhythm(){rhythmEl.textContent=`Ритм: ${currentInhale} вдих → ${currentHoldIn} затримка → ${currentExhale} видих → ${currentHoldOut} затримка`}
