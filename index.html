@@ -65,12 +65,12 @@ function beep(kind) {
 
   const frequencies = {
     inhale: 880,
-    holdin: 660,
-    exhale: 440,
-    holdout: 330
+    holdin: 880,
+    exhale: 880,
+    holdout: 880
   };
 
-  const base = frequencies[kind] || 440;
+  const base = frequencies[kind] || 880;
   const now = audioCtx.currentTime;
 
   const compressor = audioCtx.createDynamicsCompressor();
