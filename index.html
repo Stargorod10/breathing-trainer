@@ -90,7 +90,7 @@ function beep(kind) {
   osc1.frequency.value = base;
 
   gain1.gain.setValueAtTime(0.0001, now);
-  gain1.gain.exponentialRampToValueAtTime(0.55, now + 0.008);
+  gain1.gain.exponentialRampToValueAtTime(0.55, now + 0.8);
   gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
 
   osc1.connect(gain1);
@@ -104,7 +104,7 @@ function beep(kind) {
   osc2.frequency.value = base * 2;
 
   gain2.gain.setValueAtTime(0.0001, now);
-  gain2.gain.exponentialRampToValueAtTime(0.30, now + 0.008);
+  gain2.gain.exponentialRampToValueAtTime(0.30, now + 0.5);
   gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
 
   osc2.connect(gain2);
@@ -118,7 +118,7 @@ function beep(kind) {
   osc3.frequency.value = base * 1.5;
 
   gain3.gain.setValueAtTime(0.0001, now);
-  gain3.gain.exponentialRampToValueAtTime(0.35, now + 0.005);
+  gain3.gain.exponentialRampToValueAtTime(0.35, now + 0.5);
   gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
 
   osc3.connect(gain3);
