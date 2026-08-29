@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#173b36"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Дихання"><link rel="manifest" href="manifest.webmanifest">
+<title>Тренажер випадкових ритмів із затримками</title>
+<style>
+body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;font-family:Arial,sans-serif;background:#f4f7f6;color:#173b36}
+.box{text-align:center;width:min(94vw,680px)} h1{font-size:30px;margin:0 0 7px}.sub{font-size:18px;margin-bottom:18px}
+.panel{background:#fff;border-radius:18px;padding:16px;margin-bottom:14px}
+.settings{display:flex;gap:9px;justify-content:center;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px;min-width:88px}label{font-size:14px}
+input,select{font-size:17px;padding:9px;border:1px solid #bbb;border-radius:9px;width:72px;text-align:center}
+select{width:145px}
+.circle{width:255px;height:255px;margin:14px auto 17px;border-radius:50%;background:#d9ebe7;display:flex;flex-direction:column;justify-content:center;align-items:center;transition:transform 1s linear}
+#phase{font-size:32px;font-weight:bold}#count{font-size:68px;margin-top:4px}
+#rhythm{font-size:17px;font-weight:bold;margin:10px}.controls{display:flex;justify-content:center;flex-wrap:wrap;gap:8px}
+button{font-size:17px;padding:11px 17px;border:0;border-radius:12px;cursor:pointer}#start{background:#173b36;color:#fff}#pause{background:#dfe8e5}#stop{background:#ddd}
+.volume{margin-top:14px}.volume input{width:180px}#remaining{font-size:17px;margin-top:13px}.hint{font-size:13px;opacity:.7;margin-top:11px}
+</style>
+<link rel="icon" href="icon.svg" type="image/svg+xml"></head>
+<body>
+<div class="box">
+<h1>Тренажер випадкових ритмів</h1>
+<div class="sub">Вдих → затримка → видих → затримка</div>
+
+<div class="panel">
+  <div class="settings">
+    <div class="field"><label>Вдих від, с</label><input id="imin" type="number" min="1" max="30" value="2"></div>
+    <div class="field"><label>до, с</label><input id="imax" type="number" min="1" max="30" value="5"></div>
+    <div class="field"><label>Затримка після вдиху, с</label><input id="hin" type="number" min="1" max="60" value="2"></div>
+    <div class="field"><label>Видих від, с</label><input id="emin" type="number" min="1" max="30" value="3"></div>
+    <div class="field"><label>до, с</label><input id="emax" type="number" min="1" max="30" value="7"></div>
+    <div class="field"><label>Затримка після видиху, с</label><input id="hout" type="number" min="1" max="60" value="2"></div>
+    <div class="field"><label>Тривалість, хв</label><input id="minutes" type="number" min="1" max="60" value="5"></div>
+  </div>
+  <div style="margin-top:12px">
+    <label>Режим випадковості</label><br>
+    <select id="mode">
+      <option value="each">Новий ритм кожен цикл</option>
+      <option value="one">Один випадковий ритм</option>
+    </select>
+  </div>
+</div>
+
+<div class="circle" id="circle"><div id="phase">ГОТОВО</div><div id="count">—</div></div>
+<div id="rhythm">Поточний ритм: —</div>
+
+<div class="controls">
+<button id="start">▶ Почати</button><button id="pause">⏸ Пауза</button><button id="stop">⏹ Стоп</button>
+</div>
+<div class="volume">Гучність: <input id="volume" type="range" min="0" max="100" value="35"></div>
+<div id="remaining">Встановіть параметри і натисніть «Почати»</div>
+<div class="hint">Затримки можна встановлювати від 1 до 60 секунд. Вони залишаються фіксованими, а вдих і видих можуть змінюватися випадково.</div>
+</div>
+
+<script>
+let timer=null,totalLeft=0,phaseLeft=0,phase="inhale",paused=false;
+let currentInhale=3,currentExhale=5,currentHoldIn=2,currentHoldOut=2,audioCtx=null;
+const $=id=>document.getElementById(id),circle=$("circle"),phaseEl=$("phase"),countEl=$("count"),rhythmEl=$("rhythm"),remainingEl=$("remaining");
+
+function audioInit(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==="suspended")audioCtx.resume()}
+function beep(kind){audioInit();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";
+o.frequency.value={inhale:660,holdin:520,exhale:440,holdout:360}[kind]||440;
+const v=Number($("volume").value)/100*.12;g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(Math.max(v,.0001),audioCtx.currentTime+.025);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.32);
+o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.34)}
+function rand(a,b,max=30){a=Math.max(1,Math.min(max,Number(a)||1));b=Math.max(1,Math.min(max,Number(b)||1));if(a>b)[a,b]=[b,a];return Math.floor(Math.random()*(b-a+1))+a}
+function newRhythm(){currentInhale=rand($("imin").value,$("imax").value);currentExhale=rand($("emin").value,$("emax").value);currentHoldIn=rand($("hin").value,$("hin").value,60);currentHoldOut=rand($("hout").value,$("hout").value,60)}
+function showRhythm(){rhythmEl.textContent=`Ритм: ${currentInhale} вдих → ${currentHoldIn} затримка → ${currentExhale} видих → ${currentHoldOut} затримка`}
+function setPhase(p,n,sound=true){phase=p;phaseLeft=n;
+const names={inhale:"ВДИХ",holdin:"ЗАТРИМКА",exhale:"ВИДИХ",holdout:"ЗАТРИМКА"};
+phaseEl.textContent=names[p];countEl.textContent=n;
+circle.style.transform=p==="inhale"?"scale(1.12)":p==="exhale"?"scale(.88)":"scale(1)";
+if(sound)beep(p)}
+function fmt(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")}
+function start(){audioInit();clearInterval(timer);
+if(!paused){totalLeft=Math.max(1,Math.min(60,Number($("minutes").value)||5))*60;newRhythm();setPhase("inhale",currentInhale,false)}
+paused=false;showRhythm();showPhaseSound();remainingEl.textContent="Залишилось: "+fmt(totalLeft);timer=setInterval(tick,1000)}
+function showPhaseSound(){beep(phase)}
+function tick(){totalLeft--;phaseLeft--;
+if(totalLeft<=0){clearInterval(timer);timer=null;paused=false;phaseEl.textContent="ГОТОВО";countEl.textContent="✓";circle.style.transform="scale(1)";remainingEl.textContent="Тренування завершено";beep("holdout");return}
+if(phaseLeft<=0){
+if(phase==="inhale")setPhase("holdin",currentHoldIn);
+else if(phase==="holdin")setPhase("exhale",currentExhale);
+else if(phase==="exhale")setPhase("holdout",currentHoldOut);
+else{if($("mode").value==="each")newRhythm();showRhythm();setPhase("inhale",currentInhale)}
+}else countEl.textContent=phaseLeft;
+remainingEl.textContent="Залишилось: "+fmt(totalLeft)}
+$("start").onclick=start;
+$("pause").onclick=()=>{if(timer){clearInterval(timer);timer=null;paused=true;remainingEl.textContent="Пауза — залишилось: "+fmt(totalLeft)}};
+$("stop").onclick=()=>{clearInterval(timer);timer=null;paused=false;phaseEl.textContent="ГОТОВО";countEl.textContent="—";circle.style.transform="scale(1)";rhythmEl.textContent="Ритм: —";remainingEl.textContent="Встановіть параметри і натисніть «Почати»"};
+</script>
+</body>
+</html>
