@@ -1,1154 +1,253 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uk">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
 <meta name="theme-color" content="#173b36">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Дихання">
-
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
-
-<title>Тренажер випадкових ритмів</title>
-
+<meta name="apple-mobile-web-app-title" content="Долоні 1–6">
+<title>Тренажер долонь — рівні 1–6</title>
 <style>
-*{
-  box-sizing:border-box;
-}
-
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-family:Arial,sans-serif;
-  background:#f4f7f6;
-  color:#173b36;
-  padding:15px;
-}
-
-.box{
-  text-align:center;
-  width:min(94vw,680px);
-}
-
-h1{
-  font-size:30px;
-  margin:0 0 7px;
-}
-
-.sub{
-  font-size:18px;
-  margin-bottom:18px;
-}
-
-.panel{
-  background:#fff;
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:14px;
-}
-
-.settings{
-  display:flex;
-  gap:10px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:5px;
-  min-width:88px;
-}
-
-label{
-  font-size:14px;
-}
-
-input,
-select{
-  font-size:17px;
-  padding:9px;
-  border:1px solid #bbb;
-  border-radius:9px;
-  width:78px;
-  text-align:center;
-  background:white;
-  color:#173b36;
-}
-
-select{
-  width:190px;
-}
-
-.circle{
-  width:255px;
-  height:255px;
-  margin:14px auto 17px;
-  border-radius:50%;
-  background:#d9ebe7;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  transition:transform 1s linear;
-}
-
-#phase{
-  font-size:32px;
-  font-weight:bold;
-}
-
-#count{
-  font-size:68px;
-  margin-top:4px;
-}
-
-#rhythm{
-  font-size:17px;
-  font-weight:bold;
-  margin:10px;
-}
-
-.controls{
-  display:flex;
-  justify-content:center;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-button{
-  font-size:17px;
-  padding:12px 18px;
-  border:0;
-  border-radius:12px;
-  cursor:pointer;
-  min-height:44px;
-}
-
-#start{
-  background:#173b36;
-  color:#fff;
-}
-
-#pause{
-  background:#dfe8e5;
-  color:#173b36;
-}
-
-#stop{
-  background:#ddd;
-  color:#173b36;
-}
-
-#soundTest{
-  background:#e8eeee;
-  color:#173b36;
-}
-
-.volume{
-  margin-top:16px;
-  font-size:17px;
-}
-
-.volume input{
-  width:220px;
-  vertical-align:middle;
-}
-
-#volumeValue{
-  display:inline-block;
-  width:42px;
-  text-align:left;
-}
-
-#remaining{
-  font-size:17px;
-  margin-top:14px;
-}
-
-.hint{
-  font-size:13px;
-  opacity:.7;
-  margin-top:11px;
-  line-height:1.4;
-}
-
-@media(max-width:500px){
-  h1{
-    font-size:26px;
-  }
-
-  .sub{
-    font-size:16px;
-  }
-
-  .circle{
-    width:225px;
-    height:225px;
-  }
-
-  #phase{
-    font-size:29px;
-  }
-
-  #count{
-    font-size:62px;
-  }
-
-  .field{
-    min-width:78px;
-  }
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:#f4f7f6;color:#173b36;font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;padding:14px}
+.app{width:min(96vw,820px);text-align:center}
+h1{font-size:29px;margin:0 0 7px}
+.sub{font-size:17px;margin-bottom:14px}
+.panel{background:#fff;border-radius:18px;padding:15px;margin-bottom:12px}
+.settings{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:5px;min-width:120px}
+label{font-size:14px}
+select,input{font-size:17px;padding:9px;border:1px solid #bbb;border-radius:9px;background:#fff;color:#173b36;text-align:center}
+#level{width:285px}#count{width:90px}#show{width:100px}#gap{width:100px}
+#stimuli{display:flex;justify-content:center;align-items:center;gap:14px;min-height:430px}
+.slot{width:45%;height:420px;display:flex;justify-content:center;align-items:center}
+.slot.single{width:70%}
+.slot img{max-width:100%;max-height:100%;object-fit:contain}
+#status{min-height:25px;font-size:16px}
+.controls{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{font-size:17px;padding:11px 18px;border:0;border-radius:12px;min-height:44px;cursor:pointer}
+#start{background:#173b36;color:#fff}#pause{background:#dfe8e5;color:#173b36}#stop{background:#ddd;color:#173b36}
+.badge{display:inline-block;padding:5px 10px;border-radius:10px;background:#e7efed;margin:3px}
+.hint{font-size:13px;opacity:.7;line-height:1.45;margin-top:9px}
+#result{display:none}
+@media(max-width:600px){
+#stimuli{min-height:320px;gap:5px}
+.slot{height:310px}
+.slot.single{width:78%}
+h1{font-size:25px}
 }
 </style>
 </head>
-
 <body>
+<div class="app">
+<h1>Тренажер долонь — рівні 1–6</h1>
+<div class="sub">Сенсомоторна реакція та латералізація</div>
 
-<div class="box">
-
-<h1>Тренажер випадкових ритмів</h1>
-
-<div class="sub">
-Вдих → затримка → видих → затримка
-</div>
-
-<div class="panel">
-
+<div class="panel" id="setup">
 <div class="settings">
-
-<div class="field">
-<label>Вдих від, с</label>
-<input id="imin" type="number" min="1" max="30" value="2">
-</div>
-
-<div class="field">
-<label>Вдих до, с</label>
-<input id="imax" type="number" min="1" max="30" value="5">
-</div>
-
-<div class="field">
-<label>Затримка після вдиху, с</label>
-<input id="hin" type="number" min="1" max="60" value="2">
-</div>
-
-<div class="field">
-<label>Видих від, с</label>
-<input id="emin" type="number" min="1" max="30" value="3">
-</div>
-
-<div class="field">
-<label>Видих до, с</label>
-<input id="emax" type="number" min="1" max="30" value="7">
-</div>
-
-<div class="field">
-<label>Затримка після видиху, с</label>
-<input id="hout" type="number" min="1" max="60" value="2">
-</div>
-
-<div class="field">
-<label>Тривалість, хв</label>
-<input id="minutes" type="number" min="1" max="60" value="5">
-</div>
-
-</div>
-
-<div style="margin-top:14px">
-
-<label>Режим випадковості</label>
-
-<br>
-
-<select id="mode">
-
-<option value="each">
-Новий ритм кожен цикл
-</option>
-
-<option value="one">
-Один випадковий ритм
-</option>
-
+<div class="field"><label>Рівень</label>
+<select id="level">
+<option value="1">1 — одна рука</option>
+<option value="2">2 — одна рука, дзеркально</option>
+<option value="3">3 — дві руки, однакові жести</option>
+<option value="4">4 — дві руки, різні жести</option>
+<option value="5">5 — перехресне розташування</option>
+<option value="6">6 — дзеркальна реакція</option>
 </select>
-
 </div>
-
+<div class="field"><label>Стимулів</label><input id="count" type="number" min="5" max="200" value="30"></div>
+<div class="field"><label>Час показу, с</label><input id="show" type="number" min="0.3" max="10" step="0.1" value="2"></div>
+<div class="field"><label>Інтервал, с</label><input id="gap" type="number" min="0" max="10" step="0.1" value="0.5"></div>
 </div>
-
-
-<div class="circle" id="circle">
-
-<div id="phase">
-ГОТОВО
-</div>
-
-<div id="count">
-—
-</div>
-
-</div>
-
-
-<div id="rhythm">
-Ритм: —
-</div>
-
-
-<div class="controls">
-
-<button id="start">
-▶ Почати
-</button>
-
-<button id="pause">
-⏸ Пауза
-</button>
-
-<button id="stop">
-⏹ Стоп
-</button>
-
-<button id="soundTest">
-🔊 Тест звуку
-</button>
-
-</div>
-
-
-<div class="volume">
-
-Гучність:
-
-<input
-id="volume"
-type="range"
-min="0"
-max="100"
-value="100"
-step="1"
->
-
-<span id="volumeValue">
-100%
-</span>
-
-</div>
-
-
-<div id="remaining">
-Встановіть параметри і натисніть «Почати»
-</div>
-
-
 <div class="hint">
-
-Короткий сигнал — початок вдиху або видиху.
-<br>
-Довший сигнал — початок затримки.
-
+<strong>1:</strong> та сама рука й форма.
+<strong>2:</strong> протилежна рука + дзеркальна форма.
+<strong>3:</strong> Л зліва / П справа, однакові жести.
+<strong>4:</strong> Л зліва / П справа, різні жести.
+<strong>5:</strong> Л/П можуть мінятися місцями, жести різні.
+<strong>6:</strong> Л зліва / П справа, різні жести → реакція протилежними руками.
+</div>
 </div>
 
+<div class="panel" id="game" style="display:none">
+<div><span id="levelLabel" class="badge"></span></div>
+<div id="progress">1 / 30</div>
+<div id="stimuli">
+<div class="slot single" id="slot1"></div>
+<div class="slot" id="slot2" style="display:none"></div>
+</div>
+<div id="status"></div>
+<div class="controls">
+<button id="pause">⏸ Пауза</button>
+<button id="stop">⏹ Стоп</button>
+</div>
 </div>
 
+<div class="panel" id="done" style="display:none">
+<div style="font-size:24px;font-weight:bold">Тренування завершено</div>
+<div id="summary" style="margin-top:8px"></div>
+<div class="controls"><button id="again">🔄 Ще раз</button></div>
+</div>
+
+<div class="controls" id="startArea"><button id="start">▶ Почати</button></div>
+</div>
 
 <script>
+const ITEMS = [{"src":"images/hand_1_L.webp","hand":"L","gid":1},{"src":"images/hand_1_P.webp","hand":"P","gid":1},{"src":"images/hand_10_L.webp","hand":"L","gid":10},{"src":"images/hand_10_P.webp","hand":"P","gid":10},{"src":"images/hand_11_L.webp","hand":"L","gid":11},{"src":"images/hand_11_P.webp","hand":"P","gid":11},{"src":"images/hand_12_L.webp","hand":"L","gid":12},{"src":"images/hand_12_P.webp","hand":"P","gid":12},{"src":"images/hand_13_L.webp","hand":"L","gid":13},{"src":"images/hand_13_P.webp","hand":"P","gid":13},{"src":"images/hand_14_L.webp","hand":"L","gid":14},{"src":"images/hand_14_P.webp","hand":"P","gid":14},{"src":"images/hand_15_L.webp","hand":"L","gid":15},{"src":"images/hand_15_P.webp","hand":"P","gid":15},{"src":"images/hand_16_L.webp","hand":"L","gid":16},{"src":"images/hand_16_P.webp","hand":"P","gid":16},{"src":"images/hand_17_L.webp","hand":"L","gid":17},{"src":"images/hand_17_P.webp","hand":"P","gid":17},{"src":"images/hand_18_L.webp","hand":"L","gid":18},{"src":"images/hand_18_P.webp","hand":"P","gid":18},{"src":"images/hand_19_L.webp","hand":"L","gid":19},{"src":"images/hand_19_P.webp","hand":"P","gid":19},{"src":"images/hand_2_L.webp","hand":"L","gid":2},{"src":"images/hand_2_P.webp","hand":"P","gid":2},{"src":"images/hand_20_L.webp","hand":"L","gid":20},{"src":"images/hand_20_P.webp","hand":"P","gid":20},{"src":"images/hand_3_L.webp","hand":"L","gid":3},{"src":"images/hand_3_P.webp","hand":"P","gid":3},{"src":"images/hand_4_L.webp","hand":"L","gid":4},{"src":"images/hand_4_P.webp","hand":"P","gid":4},{"src":"images/hand_5_L.webp","hand":"L","gid":5},{"src":"images/hand_5_P.webp","hand":"P","gid":5},{"src":"images/hand_6_L.webp","hand":"L","gid":6},{"src":"images/hand_6_P.webp","hand":"P","gid":6},{"src":"images/hand_7_P.webp","hand":"P","gid":7},{"src":"images/hand_7_L.webp","hand":"L","gid":7},{"src":"images/hand_8_L.webp","hand":"L","gid":8},{"src":"images/hand_8_P.webp","hand":"P","gid":8},{"src":"images/hand_9_L.webp","hand":"L","gid":9},{"src":"images/hand_9_P.webp","hand":"P","gid":9}];
 
-let timer = null;
+let running=false, paused=false, index=0, total=30, level=1;
+let showMs=2000, gapMs=500, timer=null;
 
-let totalLeft = 0;
+const levelNames={
+  1:"Рівень 1 — одна рука",
+  2:"Рівень 2 — одна рука, дзеркально",
+  3:"Рівень 3 — дві руки, однакові жести",
+  4:"Рівень 4 — дві руки, різні жести",
+  5:"Рівень 5 — перехресне розташування",
+  6:"Рівень 6 — дзеркальна реакція"
+};
 
-let phaseLeft = 0;
-
-let phase = "inhale";
-
-let paused = false;
-
-let currentInhale = 3;
-
-let currentExhale = 5;
-
-let currentHoldIn = 2;
-
-let currentHoldOut = 2;
-
-let audioCtx = null;
-
-
-/* =========================
-   ЗВУК
-========================= */
-
-function audioInit(){
-
-  if(!audioCtx){
-
-    const AudioContext =
-      window.AudioContext ||
-      window.webkitAudioContext;
-
-    if(!AudioContext){
-      return false;
-    }
-
-    audioCtx = new AudioContext();
-
-  }
-
-  if(audioCtx.state === "suspended"){
-    audioCtx.resume();
-  }
-
-  return true;
+function pick(hand=null, excludeGid=null){
+  let a=hand ? ITEMS.filter(x=>x.hand===hand) : ITEMS;
+  if(excludeGid!==null) a=a.filter(x=>x.gid!==excludeGid);
+  return a[Math.floor(Math.random()*a.length)];
 }
 
-
-/*
-  Один і той самий сигнал 880 Гц
-  для всіх фаз.
-
-  Гучність реально залежить
-  від повзунка volume.
-*/
-
-function beep(duration = 0.40){
-
-  if(!audioInit()){
-    return;
-  }
-
-  const now = audioCtx.currentTime;
-
-  const volume =
-    Number(
-      document.getElementById("volume").value
-    ) / 100;
-
-
-  /*
-    Компресор.
-    Він робить короткий сигнал
-    щільнішим і краще чутним.
-  */
-
-  const compressor =
-    audioCtx.createDynamicsCompressor();
-
-  compressor.threshold.value = -18;
-  compressor.knee.value = 5;
-  compressor.ratio.value = 12;
-  compressor.attack.value = 0.001;
-  compressor.release.value = 0.12;
-
-  compressor.connect(
-    audioCtx.destination
-  );
-
-
-  /*
-    Основний сигнал
-  */
-
-  const osc1 =
-    audioCtx.createOscillator();
-
-  const gain1 =
-    audioCtx.createGain();
-
-  osc1.type = "square";
-
-  osc1.frequency.value = 880;
-
-
-  /*
-    Гучність основного сигналу.
-    0.8 × гучність повзунка.
-  */
-
-  const mainLevel =
-    0.8 * volume;
-
-
-  gain1.gain.setValueAtTime(
-    0.0001,
-    now
-  );
-
-  gain1.gain.exponentialRampToValueAtTime(
-    Math.max(mainLevel,0.0001),
-    now + 0.008
-  );
-
-  gain1.gain.exponentialRampToValueAtTime(
-    0.0001,
-    now + duration
-  );
-
-
-  osc1.connect(gain1);
-  gain1.connect(compressor);
-
-
-  /*
-    Друга гармоніка.
-    Робить звук чіткішим
-    на маленькому динаміку iPhone.
-  */
-
-  const osc2 =
-    audioCtx.createOscillator();
-
-  const gain2 =
-    audioCtx.createGain();
-
-  osc2.type = "triangle";
-
-  osc2.frequency.value = 1760;
-
-
-  const secondLevel =
-    0.42 * volume;
-
-
-  gain2.gain.setValueAtTime(
-    0.0001,
-    now
-  );
-
-  gain2.gain.exponentialRampToValueAtTime(
-    Math.max(secondLevel,0.0001),
-    now + 0.008
-  );
-
-  gain2.gain.exponentialRampToValueAtTime(
-    0.0001,
-    now + 0.30
-  );
-
-
-  osc2.connect(gain2);
-  gain2.connect(compressor);
-
-
-  /*
-    Короткий високочастотний акцент.
-  */
-
-  const osc3 =
-    audioCtx.createOscillator();
-
-  const gain3 =
-    audioCtx.createGain();
-
-  osc3.type = "sine";
-
-  osc3.frequency.value = 2640;
-
-
-  const thirdLevel =
-    0.22 * volume;
-
-
-  gain3.gain.setValueAtTime(
-    0.0001,
-    now
-  );
-
-  gain3.gain.exponentialRampToValueAtTime(
-    Math.max(thirdLevel,0.0001),
-    now + 0.004
-  );
-
-  gain3.gain.exponentialRampToValueAtTime(
-    0.0001,
-    now + 0.12
-  );
-
-
-  osc3.connect(gain3);
-  gain3.connect(compressor);
-
-
-  /*
-    Запуск.
-  */
-
-  osc1.start(now);
-  osc2.start(now);
-  osc3.start(now);
-
-  osc1.stop(now + duration + 0.02);
-  osc2.stop(now + 0.32);
-  osc3.stop(now + 0.15);
-
+function sameGesture(hand,gid){
+  return ITEMS.find(x=>x.hand===hand && x.gid===gid) || null;
 }
 
-
-/* =========================
-   ТЕСТ ЗВУКУ
-========================= */
-
-document
-  .getElementById("soundTest")
-  .addEventListener("click",function(){
-
-    audioInit();
-
-    /*
-      Три сигнали поспіль,
-      щоб одразу оцінити гучність.
-    */
-
-    beep();
-
-    setTimeout(function(){
-      beep();
-    },500);
-
-    setTimeout(function(){
-      beep();
-    },1000);
-
-  });
-
-
-/* =========================
-   ПОВЗУНОК ГУЧНОСТІ
-========================= */
-
-document
-  .getElementById("volume")
-  .addEventListener("input",function(){
-
-    document
-      .getElementById("volumeValue")
-      .textContent =
-      this.value + "%";
-
-  });
-
-
-/* =========================
-   ВИПАДКОВІ ЗНАЧЕННЯ
-========================= */
-
-function rand(min,max,limit){
-
-  min =
-    Math.max(
-      1,
-      Math.min(
-        limit,
-        Number(min) || 1
-      )
-    );
-
-  max =
-    Math.max(
-      1,
-      Math.min(
-        limit,
-        Number(max) || 1
-      )
-    );
-
-  if(min > max){
-
-    const temp = min;
-
-    min = max;
-
-    max = temp;
-
-  }
-
-  return Math.floor(
-    Math.random() *
-    (max - min + 1)
-  ) + min;
-
+function render(item, slot){
+  slot.innerHTML="";
+  const img=document.createElement("img");
+  img.src=item.src;
+  img.alt="";
+  slot.appendChild(img);
 }
 
-
-/* =========================
-   НОВИЙ РИТМ
-========================= */
-
-function newRhythm(){
-
-  currentInhale =
-    rand(
-      document.getElementById("imin").value,
-      document.getElementById("imax").value,
-      30
-    );
-
-  currentExhale =
-    rand(
-      document.getElementById("emin").value,
-      document.getElementById("emax").value,
-      30
-    );
-
-
-  /*
-    Затримки фіксовані.
-    Їх можна задавати 1–60 секунд.
-  */
-
-  currentHoldIn =
-    Math.max(
-      1,
-      Math.min(
-        60,
-        Number(
-          document.getElementById("hin").value
-        ) || 2
-      )
-    );
-
-
-  currentHoldOut =
-    Math.max(
-      1,
-      Math.min(
-        60,
-        Number(
-          document.getElementById("hout").value
-        ) || 2
-      )
-    );
-
-}
-
-
-/* =========================
-   ПОКАЗ РИТМУ
-========================= */
-
-function showRhythm(){
-
-  document.getElementById("rhythm")
-    .textContent =
-    "Ритм: " +
-    currentInhale +
-    " с вдих → " +
-    currentHoldIn +
-    " с затримка → " +
-    currentExhale +
-    " с видих → " +
-    currentHoldOut +
-    " с затримка";
-
-}
-
-
-/* =========================
-   ФАЗА
-========================= */
-
-function setPhase(
-  newPhase,
-  seconds,
-  sound = true
-){
-
-  phase = newPhase;
-
-  phaseLeft = seconds;
-
-
-  const names = {
-
-    inhale:"ВДИХ",
-
-    holdin:"ЗАТРИМКА",
-
-    exhale:"ВИДИХ",
-
-    holdout:"ЗАТРИМКА"
-
-  };
-
-
-  document.getElementById("phase")
-    .textContent =
-    names[newPhase];
-
-
-  document.getElementById("count")
-    .textContent =
-    seconds;
-
-
-  /*
-    Вдих — збільшуємо коло.
-    Видих — зменшуємо.
-    Затримка — середній розмір.
-  */
-
-  if(newPhase === "inhale"){
-
-    document.getElementById("circle")
-      .style.transform =
-      "scale(1.12)";
-
+function makeStimulus(){
+  if(level===1 || level===2){
+    return [pick()];
   }
 
-  else if(newPhase === "exhale"){
-
-    document.getElementById("circle")
-      .style.transform =
-      "scale(.88)";
-
+  if(level===3){
+    // Same gesture on both corresponding hands.
+    const g=pick();
+    const l=sameGesture("L",g.gid);
+    const p=sameGesture("P",g.gid);
+    if(l && p) return [l,p];
+    return [pick("L"),pick("P")];
   }
 
-  else{
-
-    document.getElementById("circle")
-      .style.transform =
-      "scale(1)";
-
+  if(level===4){
+    // Corresponding sides, different gestures.
+    const l=pick("L");
+    const p=pick("P",l.gid);
+    return [l,p];
   }
 
-
-  if(sound){
-
-    /*
-      Затримка — довший сигнал.
-      Вдих і видих — звичайний короткий сигнал.
-    */
-
-    if(newPhase === "holdin" || newPhase === "holdout"){
-      beep(0.90);
-    }
-    else{
-      beep(0.40);
-    }
-
+  if(level===5){
+    // One L and one P, different gestures; positions may be crossed.
+    const l=pick("L");
+    const p=pick("P",l.gid);
+    return Math.random()<0.5 ? [l,p] : [p,l];
   }
 
+  // Level 6: corresponding sides, different gestures.
+  // Response rule is conceptual: opposite hand, SAME gesture.
+  const l=pick("L");
+  const p=pick("P",l.gid);
+  return [l,p];
 }
 
-
-/* =========================
-   ЧАС
-========================= */
-
-function fmt(seconds){
-
-  return (
-    Math.floor(seconds / 60)
-    +
-    ":"
-    +
-    String(
-      seconds % 60
-    ).padStart(2,"0")
-  );
-
+function clearStimuli(){
+  document.getElementById("slot1").innerHTML="";
+  document.getElementById("slot2").innerHTML="";
 }
 
+function next(){
+  if(!running || paused) return;
+  if(index>=total) return finish();
 
-/* =========================
-   ПОЧАТОК
-========================= */
+  index++;
+  document.getElementById("progress").textContent=index+" / "+total;
+
+  const s=makeStimulus();
+  const a=document.getElementById("slot1");
+  const b=document.getElementById("slot2");
+
+  if(level<=2){
+    a.classList.add("single");
+    b.style.display="none";
+    render(s[0],a);
+  } else {
+    a.classList.remove("single");
+    b.style.display="flex";
+    render(s[0],a);
+    render(s[1],b);
+  }
+
+  timer=setTimeout(()=>{
+    if(!running || paused) return;
+    clearStimuli();
+    timer=setTimeout(next,gapMs);
+  },showMs);
+}
 
 function start(){
+  clearTimeout(timer);
+  level=Number(document.getElementById("level").value);
+  total=Math.max(5,Math.min(200,Number(document.getElementById("count").value)||30));
+  showMs=Math.max(300,Math.min(10000,Number(document.getElementById("show").value)*1000));
+  gapMs=Math.max(0,Math.min(10000,Number(document.getElementById("gap").value)*1000));
 
-  audioInit();
+  index=0; running=true; paused=false;
+  document.getElementById("setup").style.display="none";
+  document.getElementById("done").style.display="none";
+  document.getElementById("startArea").style.display="none";
+  document.getElementById("game").style.display="block";
+  document.getElementById("levelLabel").textContent=levelNames[level];
+  document.getElementById("pause").textContent="⏸ Пауза";
+  document.getElementById("status").textContent="";
+  next();
+}
 
-  clearInterval(timer);
+function finish(){
+  clearTimeout(timer);
+  running=false; paused=false;
+  document.getElementById("game").style.display="none";
+  document.getElementById("done").style.display="block";
+  document.getElementById("summary").textContent="Виконано стимулів: "+total+" · "+levelNames[level];
+}
 
+document.getElementById("start").onclick=start;
 
+document.getElementById("pause").onclick=()=>{
+  if(!running)return;
   if(!paused){
-
-    totalLeft =
-      Math.max(
-        1,
-        Math.min(
-          60,
-          Number(
-            document.getElementById("minutes").value
-          ) || 5
-        )
-      ) * 60;
-
-
-    newRhythm();
-
-    setPhase(
-      "inhale",
-      currentInhale,
-      false
-    );
-
+    paused=true; clearTimeout(timer);
+    document.getElementById("pause").textContent="▶ Продовжити";
+    document.getElementById("status").textContent="Пауза";
+  }else{
+    paused=false;
+    document.getElementById("pause").textContent="⏸ Пауза";
+    document.getElementById("status").textContent="";
+    next();
   }
-
-
-  paused = false;
-
-  showRhythm();
-
-  beep();
-
-
-  document.getElementById("remaining")
-    .textContent =
-    "Залишилось: " +
-    fmt(totalLeft);
-
-
-  timer =
-    setInterval(
-      tick,
-      1000
-    );
-
-}
-
-
-/* =========================
-   ТІК
-========================= */
-
-function tick(){
-
-  totalLeft--;
-
-  phaseLeft--;
-
-
-  if(totalLeft <= 0){
-
-    clearInterval(timer);
-
-    timer = null;
-
-    paused = false;
-
-
-    document.getElementById("phase")
-      .textContent =
-      "ГОТОВО";
-
-
-    document.getElementById("count")
-      .textContent =
-      "✓";
-
-
-    document.getElementById("circle")
-      .style.transform =
-      "scale(1)";
-
-
-    document.getElementById("remaining")
-      .textContent =
-      "Тренування завершено";
-
-
-    beep();
-
-    return;
-
-  }
-
-
-  if(phaseLeft <= 0){
-
-    /*
-      ВДИХ → ЗАТРИМКА
-    */
-
-    if(phase === "inhale"){
-
-      setPhase(
-        "holdin",
-        currentHoldIn
-      );
-
-    }
-
-
-    /*
-      ЗАТРИМКА → ВИДИХ
-    */
-
-    else if(phase === "holdin"){
-
-      setPhase(
-        "exhale",
-        currentExhale
-      );
-
-    }
-
-
-    /*
-      ВИДИХ → ЗАТРИМКА
-    */
-
-    else if(phase === "exhale"){
-
-      setPhase(
-        "holdout",
-        currentHoldOut
-      );
-
-    }
-
-
-    /*
-      ЗАТРИМКА → НОВИЙ ЦИКЛ
-    */
-
-    else{
-
-      if(
-        document.getElementById("mode").value
-        ===
-        "each"
-      ){
-
-        newRhythm();
-
-      }
-
-
-      showRhythm();
-
-
-      setPhase(
-        "inhale",
-        currentInhale
-      );
-
-    }
-
-  }
-
-  else{
-
-    document.getElementById("count")
-      .textContent =
-      phaseLeft;
-
-  }
-
-
-  document.getElementById("remaining")
-    .textContent =
-    "Залишилось: " +
-    fmt(totalLeft);
-
-}
-
-
-/* =========================
-   ПАУЗА
-========================= */
-
-document
-  .getElementById("pause")
-  .addEventListener(
-    "click",
-    function(){
-
-      if(timer){
-
-        clearInterval(timer);
-
-        timer = null;
-
-        paused = true;
-
-
-        document.getElementById("remaining")
-          .textContent =
-          "Пауза — залишилось: " +
-          fmt(totalLeft);
-
-      }
-
-    }
-  );
-
-
-/* =========================
-   СТОП
-========================= */
-
-document
-  .getElementById("stop")
-  .addEventListener(
-    "click",
-    function(){
-
-      clearInterval(timer);
-
-      timer = null;
-
-      paused = false;
-
-
-      document.getElementById("phase")
-        .textContent =
-        "ГОТОВО";
-
-
-      document.getElementById("count")
-        .textContent =
-        "—";
-
-
-      document.getElementById("circle")
-        .style.transform =
-        "scale(1)";
-
-
-      document.getElementById("rhythm")
-        .textContent =
-        "Ритм: —";
-
-
-      document.getElementById("remaining")
-        .textContent =
-        "Встановіть параметри і натисніть «Почати»";
-
-    }
-  );
-
-
-/* =========================
-   СТАРТ
-========================= */
-
-document
-  .getElementById("start")
-  .addEventListener(
-    "click",
-    start
-  );
-
-
-/*
-  Початкове значення повзунка.
-*/
-
-document
-  .getElementById("volumeValue")
-  .textContent =
-  document.getElementById("volume").value
-  + "%";
-
+};
+
+document.getElementById("stop").onclick=()=>{
+  clearTimeout(timer); running=false; paused=false;
+  document.getElementById("game").style.display="none";
+  document.getElementById("setup").style.display="block";
+  document.getElementById("startArea").style.display="flex";
+};
+
+document.getElementById("again").onclick=()=>{
+  document.getElementById("done").style.display="none";
+  document.getElementById("setup").style.display="block";
+  document.getElementById("startArea").style.display="flex";
+};
 </script>
-
 </body>
 </html>
